@@ -8,7 +8,6 @@ PackedVaryings vert(Attributes input)
 {
     Varyings output = (Varyings)0;
     output = BuildVaryings(input);
-    output.color *= _RendererColor;
     PackedVaryings packedOutput = PackVaryings(output);
     return packedOutput;
 }
@@ -28,9 +27,6 @@ half4 frag(PackedVaryings packedInput) : SV_TARGET
     half4 color = half4(surfaceDescription.BaseColor, surfaceDescription.Alpha);
 #endif
 
-    if (color.a == 0.0)
-        discard;
-
     #if defined(DEBUG_DISPLAY)
     SurfaceData2D surfaceData;
     InitializeSurfaceData(color.rgb, color.a, surfaceData);
@@ -46,6 +42,6 @@ half4 frag(PackedVaryings packedInput) : SV_TARGET
     }
     #endif
 
-    color *= unpacked.color;
+    color *= unpacked.color * _RendererColor;
     return color;
 }

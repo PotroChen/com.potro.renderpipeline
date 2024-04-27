@@ -57,7 +57,7 @@ namespace UnityEngine.Rendering.Universal
         }
 
         /// <summary>
-        /// The accuracy of how the normal map calculation.
+        /// The accuracy of how the normap map calculation.
         /// </summary>
         public enum NormalMapQuality
         {
@@ -85,7 +85,7 @@ namespace UnityEngine.Rendering.Universal
             /// </summary>
             Additive,
             /// <summary>
-            /// Colors are blended using standard blending (alpha, 1-alpha)
+            /// Colors are blended using standed blending (alpha, 1-alpha)
             /// </summary>
             AlphaBlend
         }
@@ -256,11 +256,11 @@ namespace UnityEngine.Rendering.Universal
         /// <summary>
         /// The Sprite that's used by the Sprite Light type to control the shape light
         /// </summary>
-        public Sprite lightCookieSprite { get { return m_LightType != LightType.Point ? m_LightCookieSprite : m_DeprecatedPointLightCookieSprite; } set => m_LightCookieSprite = value; }
+        public Sprite lightCookieSprite { get { return m_LightType != LightType.Point ? m_LightCookieSprite : m_DeprecatedPointLightCookieSprite; } }
         /// <summary>
         /// Controls the brightness and distance of the fall off (edge) of the light
         /// </summary>
-        public float falloffIntensity { get => m_FalloffIntensity; set => m_FalloffIntensity = Mathf.Clamp(value, 0, 1); }
+        public float falloffIntensity => m_FalloffIntensity;
 
         [Obsolete]
         public bool alphaBlendOnOverlap { get { return m_OverlapOperation == OverlapOperation.AlphaBlend; } }
@@ -285,9 +285,6 @@ namespace UnityEngine.Rendering.Universal
         /// </summary>
         public NormalMapQuality normalMapQuality => m_NormalMapQuality;
 
-        /// <summary>
-        /// Returns if volumetric shadows should be rendered.
-        /// </summary>
         public bool renderVolumetricShadows => volumetricShadowsEnabled && shadowVolumeIntensity > 0;
 
         internal void MarkForUpdate()
@@ -430,17 +427,11 @@ namespace UnityEngine.Rendering.Universal
             forceUpdate = false;
         }
 
-        /// <summary>
-        /// OnBeforeSerialize implementation.
-        /// </summary>
         public void OnBeforeSerialize()
         {
             m_ComponentVersion = k_CurrentComponentVersion;
         }
 
-        /// <summary>
-        /// OnAfterSerialize implementation.
-        /// </summary>
         public void OnAfterDeserialize()
         {
             // Upgrade from no serialized version

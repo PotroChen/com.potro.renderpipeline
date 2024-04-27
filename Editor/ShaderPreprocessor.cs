@@ -351,21 +351,6 @@ namespace UnityEditor.Rendering.Universal
             {
                 stripDebugDisplayShaders = true;
             }
-
-            // XRTODO: We need to figure out what's the proper way to detect HL target platform when building. For now, HL is the only XR platform available on WSA so we assume this case targets HL platform.
-            var wsaTargetSettings = XRGeneralSettingsPerBuildTarget.XRGeneralSettingsForBuildTarget(BuildTargetGroup.WSA);
-            if (wsaTargetSettings != null && wsaTargetSettings.AssignedSettings != null && wsaTargetSettings.AssignedSettings.activeLoaders.Count > 0)
-            {
-                // Due to the performance consideration, keep addtional light off variant to avoid extra ALU cost related to dummy additional light handling.
-                features |= ShaderFeatures.AdditionalLightsKeepOffVariants;
-            }
-
-            var questTargetSettings = XRGeneralSettingsPerBuildTarget.XRGeneralSettingsForBuildTarget(BuildTargetGroup.Android);
-            if (questTargetSettings != null && questTargetSettings.AssignedSettings != null && questTargetSettings.AssignedSettings.activeLoaders.Count > 0)
-            {
-                // Due to the performance consideration, keep addtional light off variant to avoid extra ALU cost related to dummy additional light handling.
-                features |= ShaderFeatures.AdditionalLightsKeepOffVariants;
-            }
 #endif
 
             if (stripDebugDisplayShaders && compilerData.shaderKeywordSet.IsEnabled(m_DebugDisplay))
@@ -812,7 +797,6 @@ namespace UnityEditor.Rendering.Universal
             var activeBuildTargetGroup = BuildPipeline.GetBuildTargetGroup(buildTarget);
             var activeBuildTargetGroupName = activeBuildTargetGroup.ToString();
 
-            bool allQualityLevelsAreOverridden = true;
             for (int i = 0; i < property.arraySize; i++)
             {
                 bool isExcluded = false;
@@ -833,18 +817,7 @@ namespace UnityEditor.Rendering.Universal
                 }
 
                 if (!isExcluded)
-                {
-                    if(QualitySettings.GetRenderPipelineAssetAt(i) is UniversalRenderPipelineAsset urpAsset)
-                        urps.Add(urpAsset);
-                    else
-                       allQualityLevelsAreOverridden = false;
-                }
-            }
-
-            if (!allQualityLevelsAreOverridden || urps.Count == 0)
-            {
-                if (GraphicsSettings.defaultRenderPipeline is UniversalRenderPipelineAsset urpAsset)
-                    urps.Add(urpAsset);
+                    urps.Add(QualitySettings.GetRenderPipelineAssetAt(i) as UniversalRenderPipelineAsset);
             }
 
             return true;
@@ -853,26 +826,16 @@ namespace UnityEditor.Rendering.Universal
         private static void FetchAllSupportedFeatures()
         {
             List<UniversalRenderPipelineAsset> urps = new List<UniversalRenderPipelineAsset>();
+            urps.Add(GraphicsSettings.defaultRenderPipeline as UniversalRenderPipelineAsset);
 
             // TODO: Replace once we have official API for filtering urps per build target
             if (!TryGetRenderPipelineAssetsForBuildTarget(EditorUserBuildSettings.activeBuildTarget, urps))
             {
                 // Fallback
                 Debug.LogWarning("Shader stripping per enabled quality levels failed! Stripping will use all quality levels. Please report a bug!");
-
-                bool allQualityLevelsAreOverridden = true;
                 for (int i = 0; i < QualitySettings.names.Length; i++)
                 {
-                    if(QualitySettings.GetRenderPipelineAssetAt(i) is UniversalRenderPipelineAsset urpAsset)
-                        urps.Add(urpAsset);
-                    else
-                        allQualityLevelsAreOverridden = false;
-                }
-
-                if (!allQualityLevelsAreOverridden || urps.Count == 0)
-                {
-                    if(GraphicsSettings.defaultRenderPipeline is UniversalRenderPipelineAsset defaultAsset)
-                        urps.Add(defaultAsset);
+                    urps.Add(QualitySettings.GetRenderPipelineAssetAt(i) as UniversalRenderPipelineAsset);
                 }
             }
 

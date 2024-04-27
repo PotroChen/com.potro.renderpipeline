@@ -51,6 +51,9 @@ namespace UnityEngine.Rendering.Universal
             [Reload("Shaders/PostProcessing/BokehDepthOfField.shader")]
             public Shader bokehDepthOfFieldPS;
 
+            [Reload("Shaders/PostProcessing/ExponentialHeightFog.shader")]
+            public Shader exponentialHeightFogPS;
+
             [Reload("Shaders/PostProcessing/CameraMotionBlur.shader")]
             public Shader cameraMotionBlurPS;
 

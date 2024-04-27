@@ -39,8 +39,6 @@ Varyings BuildVaryings(Attributes input)
 {
     Varyings output = (Varyings)0;
 
-    UNITY_SETUP_INSTANCE_ID(input);
-
 #if defined(HAVE_VFX_MODIFICATION)
     AttributesElement element;
     ZERO_INITIALIZE(AttributesElement, element);
@@ -54,6 +52,7 @@ Varyings BuildVaryings(Attributes input)
     SetupVFXMatrices(element, output);
 #endif
 
+    UNITY_SETUP_INSTANCE_ID(input);
     UNITY_TRANSFER_INSTANCE_ID(input, output);
     UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 

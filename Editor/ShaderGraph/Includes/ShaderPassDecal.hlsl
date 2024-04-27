@@ -179,32 +179,25 @@ void Frag(PackedVaryings packedInput,
 
     half angleFadeFactor = 1.0;
 
-    float2 positionCS = input.positionCS.xy;
-
-    // Only screen space needs flip logic, other passes do not setup needed properties so we skip here
-#if defined(DECAL_SCREEN_SPACE)
-    TransformScreenUV(positionCS, _ScreenSize.y);
-#endif
-
 #if defined(DECAL_PROJECTOR)
 #if UNITY_REVERSED_Z
-    float depth = LoadSceneDepth(positionCS.xy);
+    float depth = LoadSceneDepth(input.positionCS.xy);
 #else
     // Adjust z to match NDC for OpenGL
-    float depth = lerp(UNITY_NEAR_CLIP_VALUE, 1, LoadSceneDepth(positionCS.xy));
+    float depth = lerp(UNITY_NEAR_CLIP_VALUE, 1, LoadSceneDepth(input.positionCS.xy));
 #endif
 #endif
 
 #if defined(DECAL_RECONSTRUCT_NORMAL)
     #if defined(_DECAL_NORMAL_BLEND_HIGH)
-        half3 normalWS = half3(ReconstructNormalTap9(positionCS.xy));
+        half3 normalWS = half3(ReconstructNormalTap9(input.positionCS.xy));
     #elif defined(_DECAL_NORMAL_BLEND_MEDIUM)
-        half3 normalWS = half3(ReconstructNormalTap5(positionCS.xy));
+        half3 normalWS = half3(ReconstructNormalTap5(input.positionCS.xy));
     #else
         half3 normalWS = half3(ReconstructNormalDerivative(input.positionCS.xy));
     #endif
 #elif defined(DECAL_LOAD_NORMAL)
-    half3 normalWS = half3(LoadSceneNormals(positionCS.xy));
+    half3 normalWS = half3(LoadSceneNormals(input.positionCS.xy));
 #endif
 
     float2 positionSS = input.positionCS.xy * _ScreenSize.zw;
@@ -257,10 +250,15 @@ void Frag(PackedVaryings packedInput,
     float3 positionWS = input.positionWS.xyz;
 #endif
 
-    half3 viewDirectionWS = GetWorldSpaceNormalizeViewDir(positionWS);
+#ifdef VARYINGS_NEED_VIEWDIRECTION_WS
+    half3 viewDirectionWS = half3(input.viewDirectionWS);
+#else
+    // Unused
+    half3 viewDirectionWS = half3(1.0, 1.0, 1.0); // Avoid the division by 0
+#endif
 
     DecalSurfaceData surfaceData;
-    GetSurfaceData(input, (uint2)positionSS, angleFadeFactor, surfaceData);
+    GetSurfaceData(input, viewDirectionWS, (uint2)positionSS, angleFadeFactor, surfaceData);
 
 #if defined(DECAL_DBUFFER)
     ENCODE_INTO_DBUFFER(surfaceData, outDBuffer);

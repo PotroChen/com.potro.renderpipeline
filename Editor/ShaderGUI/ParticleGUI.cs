@@ -299,7 +299,7 @@ namespace UnityEditor.Rendering.Universal.ShaderGUI
                 if (useGPUInstancing && renderer.renderMode == ParticleSystemRenderMode.Mesh && renderer.supportsMeshInstancing)
                     streamsValid = CompareVertexStreams(rendererStreams, instancedStreams);
                 else
-                    streamsValid = CompareVertexStreams(rendererStreams, streams);
+                    streamsValid = CompareVertexStreams(rendererStreams, instancedStreams);
 
                 if (!streamsValid)
                     Warnings += "-" + renderer.name + "\n";

@@ -10,9 +10,6 @@ using UnityEditor.ProjectWindowCallback;
 
 namespace UnityEngine.Rendering.Universal
 {
-    /// <summary>
-    /// Class <c>Renderer2DData</c> contains resources for a <c>Renderer2D</c>.
-    /// </summary>
     [Serializable, ReloadGroup, ExcludeFromPreset]
     [MovedFrom("UnityEngine.Experimental.Rendering.Universal")]
     [HelpURL("https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@latest/index.html?subfolder=/manual/2DRendererData_overview.html")]
@@ -130,10 +127,6 @@ namespace UnityEngine.Rendering.Universal
         internal int cameraSortingLayerTextureBound => m_CameraSortingLayersTextureBound;
         internal Downsampling cameraSortingLayerDownsamplingMethod => m_CameraSortingLayerDownsamplingMethod;
 
-        /// <summary>
-        /// Creates the instance of the Renderer2D.
-        /// </summary>
-        /// <returns>The instance of Renderer2D</returns>
         protected override ScriptableRenderer Create()
         {
 #if UNITY_EDITOR
@@ -145,9 +138,6 @@ namespace UnityEngine.Rendering.Universal
             return new Renderer2D(this);
         }
 
-        /// <summary>
-        /// OnEnable implementation.
-        /// </summary>
         protected override void OnEnable()
         {
             base.OnEnable();
